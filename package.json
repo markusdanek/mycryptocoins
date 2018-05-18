@@ -7,16 +7,22 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "vue": "^2.5.16",
+    "vue-axios": "^2.1.1",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.10",
     "@vue/cli-service": "^3.0.0-beta.10",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
-    "vue-template-compiler": "^2.5.13"
+    "vue-resource": "^1.5.0",
+    "vue-template-compiler": "^2.5.13",
+    "vuejs-datepicker": "^1.2.0"
   },
   "browserslist": [
     "> 1%",
