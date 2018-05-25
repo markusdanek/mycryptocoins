@@ -1,9 +1,11 @@
 <template>
   <div>
-    <pre>{{ $data }}</pre>
-
+    <pre>
+      ListCrypto:
+      {{ $data }}
+    </pre>
     <div v-for="price in crypto_prices" :key="price.name">
-     Price: {{price}}
+     <!-- Price: {{price}} -->
     </div>
   </div>
 </template>
@@ -18,5 +20,5 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 </style>

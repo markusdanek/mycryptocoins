@@ -1,6 +1,9 @@
 <template>
   <div>
-    <pre>{{ $data }}</pre>
+    <pre>
+      AddCrypto:
+      {{ $data }}
+    </pre>
     <form @submit.prevent="addCrypto()">
       <input autofocus id="crypto_symbol" placeholder="BTC" v-model="symbol" />
       <input id="cryptoAmount" placeholder="1.5" v-model="amount" />
