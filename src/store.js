@@ -11,25 +11,22 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
 
   state: {
-    data: [
-      {symbol: '', price: ''}
-    ]
+    currencies: [],
+    histoCurrencies: []
   },
 
   mutations: {
     RECEIVE_PRICE(state, {symbol, price}) {
-      state.data = {
-        symbol: symbol,
-        price: price
+      const index = state.currencies.findIndex(d => d.symbol === symbol);
+      if (index === -1) {
+        state.currencies.push({symbol, price});
+      } else {
+        state.currencies[index] = {
+          symbol,
+          price
+        };
       }
-      // state.data.push({
-      //   symbol: symbol,
-      //   price: price
-      // });
     }
-    // RECEIVE_HISTOPRICE(state, {crypto_prices}) {
-    //   state.data = crypto_prices;
-    // }
   },
 
   actions: {
@@ -41,29 +38,11 @@ export default new Vuex.Store({
         price: data[payload.currency]
       });
     }
-    // async FETCH_HISTOPRICE({commit}, payload) {
-    //   let tsUnix = moment(payload.timestamp).unix();
-    //   const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${payload.tsUnix}`;
-    //   const {data} = await axios.get(url);
-    //   console.log("action data", data);
-    //   commit('RECEIVE_HISTOPRICE', {
-    //     crypto_histoprices: data[payload.symbol][payload.currency]
-    //   });
-    // }
   },
 
   getters: {
-    crypto_prices: state => {
-      console.log("getter state", state);
+    getCurrencies: state => {
       return state;
-      // return state.data.map(data => {
-        // return {
-          // name: data.name,
-          // url: data.urls[1] ? data.urls[1].url : data.urls[0].url,
-          // image: `${data.thumbnail.path}.${data.thumbnail.extension}`,
-          // description: data.description === '' ? 'No description listed' : data.description
-        // }
-      // })
     }
   }
 })

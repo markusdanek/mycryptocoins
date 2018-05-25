@@ -1,11 +1,12 @@
 <template>
   <div>
-    <pre>
-      ListCrypto:
+    <!-- <pre>
       {{ $data }}
-    </pre>
-    <div v-for="price in crypto_prices" :key="price.name">
-     <!-- Price: {{price}} -->
+    </pre> -->
+    <div v-for="crypto in getCurrencies" :key="crypto.symbol">
+      <div v-for="coin in crypto" :key="coin.symbol">
+        {{coin.symbol}} - {{coin.price}}
+      </div>
     </div>
   </div>
 </template>
@@ -15,7 +16,7 @@ import {mapGetters} from 'vuex'
 
 export default {
   computed: mapGetters([
-    'crypto_prices'
+    'getCurrencies'
   ])
 }
 </script>
