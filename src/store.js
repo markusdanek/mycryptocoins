@@ -2,9 +2,10 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import moment from 'moment';
-import createPersistedState from "vuex-persistedstate"
+import createPersistedState from "vuex-persistedstate";
+import {lastWeek, lastWeekUnix} from '../src/helpers/utils';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
 
@@ -26,6 +27,12 @@ export default new Vuex.Store({
           price
         };
       }
+    },
+    RECEIVE_HISTOPRICE(state, {symbol, amount, purchasedate, historic}) {
+      state.histoCurrencies.push({symbol, amount, purchasedate, historic});
+    },
+    REMOVE_CRYPTO(state, {payload}) {
+      state.histoCurrencies.splice(state.histoCurrencies.indexOf(payload), 1);
     }
   },
 
@@ -37,12 +44,43 @@ export default new Vuex.Store({
         symbol: payload.symbol,
         price: data[payload.currency]
       });
-    }
+    },
+    async FETCH_HISTOPRICE({commit}, payload) {
+      let requestData = [];
+      let commitData = [];
+      let tsWeekUnix = lastWeekUnix(payload.timestamp);
+      let tsWeek = lastWeek(payload.timestamp);
+      for (var i = 0; i < tsWeek.length; i++) {
+        const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${tsWeekUnix[i]}`;
+        const {data} = await axios.get(url);
+        requestData.push(data);
+      }
+      for (var i = 0; i < tsWeek.length; i++) {
+        for (var i = 0; i < requestData.length; i++) {
+          commitData.push({ts: tsWeek[i], price: requestData[i][payload.symbol][payload.currency]
+          });
+        }
+      }
+      commit('RECEIVE_HISTOPRICE', {
+        symbol: payload.symbol,
+        amount: payload.amount,
+        purchasedate: payload.timestamp,
+        historic: {
+          commitData
+        }
+      });
+    },
+    async REMOVE_CRYPTO({commit}, payload) {
+      commit('REMOVE_CRYPTO', {payload});
+    },
   },
 
   getters: {
     getCurrencies: state => {
-      return state;
+      return state.currencies;
+    },
+    getHistoCurrencies: state => {
+      return state.histoCurrencies;
     }
   }
 })

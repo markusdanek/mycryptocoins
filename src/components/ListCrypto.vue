@@ -1,24 +1,28 @@
 <template>
   <div>
-    <!-- <pre>
-      {{ $data }}
-    </pre> -->
-    <div v-for="crypto in getCurrencies" :key="crypto.symbol">
-      <div v-for="coin in crypto" :key="coin.symbol">
-        {{coin.symbol}} - {{coin.price}}
-      </div>
+    <div v-for="(value, propertyName, index) in getHistoCurrencies">
+      {{value.symbol}} - {{value.amount}} - <span @click="removeCrypto(value)">Remove</span>
     </div>
+    <!-- <pre>
+      {{getHistoCurrencies}}
+    </pre> -->
   </div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+  import {mapGetters} from 'vuex'
 
-export default {
-  computed: mapGetters([
-    'getCurrencies'
-  ])
-}
+  export default {
+    name: 'list-crypto',
+    computed: {
+      ...mapGetters(['getCurrencies', 'getHistoCurrencies'])
+    },
+    methods: {
+      removeCrypto(crypto){
+        this.$store.dispatch('REMOVE_CRYPTO', crypto);
+      }
+    }
+  }
 </script>
 
 <style lang="scss">
