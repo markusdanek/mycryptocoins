@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import moment from 'moment';
+import _ from 'lodash'
 import createPersistedState from "vuex-persistedstate";
 import {lastWeek, lastWeekUnix} from '../src/helpers/utils';
 
@@ -57,7 +58,7 @@ export default new Vuex.Store({
       }
       for (var i = 0; i < tsWeek.length; i++) {
         for (var i = 0; i < requestData.length; i++) {
-          coinValue = requestData[i][payload.symbol][payload.currency] * payload.amount;
+          coinValue= _.multiply(requestData[i][payload.symbol][payload.currency], payload.amount);
           commitData.push({ts: tsWeek[i], price: requestData[i][payload.symbol][payload.currency], value: coinValue
           });
         }
