@@ -12,8 +12,6 @@
 
 <script>
 import Datepicker from 'vuejs-datepicker';
-import {cryptostorage} from '../helpers/localStorage';
-import {getPrice, getPriceForTimestamp} from '../api/crypto';
 
 export default {
   name: 'add-crypto',
