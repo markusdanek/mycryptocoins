@@ -1,19 +1,19 @@
 <template>
   <div>
-    <div v-for="(value, key) in getCoins">
-      <img :src="imageUrl(value.symbol)" alt="" width="20" />
-      {{value.symbol}} - {{value.amount}}
-      <div v-for="(asdf, key) in value.historic">
-        <div v-for="(as, key) in asdf">
-          <div v-if="key==0">
-            {{as.value}} - <span @click="removeCrypto(value)">Remove</span>
+    <div class="columns">
+      <div class="column" v-for="(value, key) in getCoins">
+        <img :src="imageUrl(value.symbol)" alt="" width="20" />
+        {{value.symbol}} - {{value.amount}}
+        <div class="column" v-for="(asdf, key) in value.historic">
+          <div v-for="(as, key) in asdf">
+            <div class="column" v-if="key==0">
+              {{as.value}} - <span @click="removeCrypto(value)">Remove</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
     <pre>
-      State:
       {{getCoins}}
     </pre>
   </div>

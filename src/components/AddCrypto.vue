@@ -1,13 +1,38 @@
 <template>
-  <div>
-    <form @submit.prevent @submit="addCrypto()">
-      <input autofocus id="crypto_symbol" placeholder="BTC" v-model="symbol" />
-      <input id="cryptoAmount" placeholder="1.5" v-model="amount" />
-      <input id="cryptoCurrency" placeholder="USD" v-model="currency" />
-      <datepicker v-model="purchasedate" name="Date" placeholder="Date of purchase"></datepicker>
-      <button name="add">Add</button>
-    </form>
-  </div>
+    <div class="field">
+      <form @submit.prevent @submit="addCrypto()">
+        <div class="columns">
+          <div class="column">
+            <div class="control">
+              <b-input autofocus id="crypto_symbol" placeholder="BTC" v-model="symbol" />
+            </div>
+          </div>
+          <div class="column">
+            <div class="control">
+              <b-input id="cryptoAmount" placeholder="1.5" v-model="amount" />
+            </div>
+          </div>
+          <div class="column">
+            <div class="control">
+              <b-input id="cryptoCurrency" placeholder="USD" v-model="currency" />
+            </div>
+          </div>
+          <div class="column">
+            <div class="control">
+              <b-datepicker
+                v-model="purchasedate"
+                name="Date"
+                placeholder="Date of purchase"
+                :first-day-of-week="1"
+                />
+            </div>
+          </div>
+          <div class="column">
+            <button class="button is-info" name="add">Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
 </template>
 
 <script>
