@@ -31,7 +31,6 @@ export default {
           'currency': this.currency,
           'timestamp': this.purchasedate,
         };
-        // this.$store.dispatch('FETCH_PRICE', payload);
         this.$store.dispatch('FETCH_HISTOPRICE', payload);
       }
     },

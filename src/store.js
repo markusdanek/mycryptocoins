@@ -12,8 +12,7 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
 
   state: {
-    currencies: [],
-    histoCurrencies: []
+    crypto: []
   },
 
   mutations: {
@@ -29,10 +28,10 @@ export default new Vuex.Store({
       }
     },
     RECEIVE_HISTOPRICE(state, {symbol, amount, purchasedate, historic}) {
-      state.histoCurrencies.push({symbol, amount, purchasedate, historic});
+      state.crypto.push({symbol, amount, purchasedate, historic});
     },
     REMOVE_CRYPTO(state, {payload}) {
-      state.histoCurrencies.splice(state.histoCurrencies.indexOf(payload), 1);
+      state.crypto.splice(state.crypto.indexOf(payload), 1);
     }
   },
 
@@ -50,6 +49,7 @@ export default new Vuex.Store({
       let commitData = [];
       let tsWeekUnix = lastWeekUnix(payload.timestamp);
       let tsWeek = lastWeek(payload.timestamp);
+      let coinValue;
       for (var i = 0; i < tsWeek.length; i++) {
         const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${tsWeekUnix[i]}`;
         const {data} = await axios.get(url);
@@ -57,7 +57,8 @@ export default new Vuex.Store({
       }
       for (var i = 0; i < tsWeek.length; i++) {
         for (var i = 0; i < requestData.length; i++) {
-          commitData.push({ts: tsWeek[i], price: requestData[i][payload.symbol][payload.currency]
+          coinValue = requestData[i][payload.symbol][payload.currency] * payload.amount;
+          commitData.push({ts: tsWeek[i], price: requestData[i][payload.symbol][payload.currency], value: coinValue
           });
         }
       }
@@ -76,11 +77,8 @@ export default new Vuex.Store({
   },
 
   getters: {
-    getCurrencies: state => {
-      return state.currencies;
-    },
-    getHistoCurrencies: state => {
-      return state.histoCurrencies;
+    getCoins: state => {
+      return state.crypto;
     }
   }
 })
