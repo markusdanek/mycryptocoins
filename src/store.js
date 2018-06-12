@@ -28,8 +28,8 @@ export default new Vuex.Store({
         };
       }
     },
-    RECEIVE_HISTOPRICE(state, {symbol, amount, purchasedate, historic}) {
-      state.crypto.push({symbol, amount, purchasedate, historic});
+    RECEIVE_HISTOPRICE(state, {symbol, amount, currency, purchasedate, historic}) {
+      state.crypto.push({symbol, amount, currency, purchasedate, historic});
     },
     REMOVE_CRYPTO(state, {payload}) {
       state.crypto.splice(state.crypto.indexOf(payload), 1);
@@ -66,6 +66,7 @@ export default new Vuex.Store({
       commit('RECEIVE_HISTOPRICE', {
         symbol: payload.symbol,
         amount: payload.amount,
+        currency: payload.currency,
         purchasedate: payload.timestamp,
         historic: {
           commitData

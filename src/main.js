@@ -10,7 +10,7 @@ import VueAxios from 'vue-axios';
 import Buefy from 'buefy';
 import 'buefy/lib/buefy.css';
 
-Vue.use(Buefy);
+Vue.use(Buefy, {defaultIconPack: 'fas'});
 Vue.use(VueAxios, axios);
 
 WebFont.load({

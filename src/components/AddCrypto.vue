@@ -1,30 +1,38 @@
 <template>
+  <div class="container">
     <div class="field">
       <form @submit.prevent @submit="addCrypto()">
         <div class="columns">
           <div class="column">
             <div class="control">
-              <b-input autofocus id="crypto_symbol" placeholder="BTC" v-model="symbol" />
+              <b-field label="Symbol">
+                <b-input autofocus id="crypto_symbol" placeholder="BTC" v-model="symbol" />
+              </b-field>
             </div>
           </div>
           <div class="column">
             <div class="control">
-              <b-input id="cryptoAmount" placeholder="1.5" v-model="amount" />
+              <b-field label="Amount">
+                <b-input id="cryptoAmount" placeholder="0.05" v-model="amount" />
+              </b-field>
             </div>
           </div>
           <div class="column">
             <div class="control">
-              <b-input id="cryptoCurrency" placeholder="USD" v-model="currency" />
+              <b-field label="Currency">
+                <b-input id="cryptoCurrency" placeholder="USD" v-model="currency" />
+              </b-field>
             </div>
           </div>
           <div class="column">
             <div class="control">
-              <b-datepicker
-                v-model="purchasedate"
-                name="Date"
-                placeholder="Date of purchase"
-                :first-day-of-week="1"
+              <b-field label="Purchase date">
+                <b-datepicker
+                  v-model="purchasedate"
+                  placeholder="Date of purchase"
+                  :first-day-of-week="1"
                 />
+              </b-field>
             </div>
           </div>
           <div class="column">
@@ -33,6 +41,7 @@
         </div>
       </form>
     </div>
+  </div>
 </template>
 
 <script>
@@ -45,7 +54,7 @@ export default {
         symbol: '',
         amount: '',
         currency: '',
-        purchasedate: ''
+        purchasedate: new Date()
       }
     },
     methods: {
@@ -66,5 +75,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+  .field {
+    padding: 20px 0 40px 0;
+  }
+  button.button {
+    margin-top: 50px;
+  }
 </style>

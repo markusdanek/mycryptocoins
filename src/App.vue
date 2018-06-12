@@ -1,27 +1,41 @@
 <template>
-  <div class="container">
-    <div id="nav">
-      <h1>myCryptoCoins</h1>
+  <div>
+    <div id="hero">
+      <div class="container">
+        <h1>myCrypto<span>Coins</span></h1>
+        <p>A simple and fast portfolio app to give you an overview of your cryptocurrency assets.</p>
+      </div>
     </div>
     <router-view/>
   </div>
 </template>
 
 <style lang="scss">
-#app {
+body {
   font-family: 'Poppins', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  background: #FEFEFE;
   color: #2c3e50;
 }
-#nav {
+#hero {
+  height: 30vh;
+  padding: 60px 0;
   text-align: center;
-  padding: 30px;
+  background-image: linear-gradient(150deg, #2d1582 0%, #19a0ff 100%);
+  background-repeat: repeat-x;
   h1 {
-    font-size: 2rem;
-    color: #377dff;
+    font-family: 'Poppins';
+    font-size: 3rem;
     font-weight: 700;
+    color: #FFF;
+    margin-bottom: 0.5rem;
+    span {
+      color: #ffc107;
+    }
+  }
+  p {
+    color: rgba(255, 255, 255, 0.7);
   }
 }
 </style>
