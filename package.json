@@ -2,9 +2,12 @@
   "name": "mycryptocoins",
   "version": "0.1.0",
   "private": true,
+  "author": "Markus Danek <markus.danek@gmail.com>",
+  "description": "Portfolio app for cryptocurrencies",
   "scripts": {
     "serve": "vue-cli-service serve --open",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "upload": "npm run build; s3-deploy './dist/**' --cwd './dist/' --signatureVersion v4 --bucket www.mycryptocoins.cc"
   },
   "dependencies": {
     "axios": "^0.18.0",
