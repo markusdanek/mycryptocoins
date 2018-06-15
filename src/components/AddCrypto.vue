@@ -65,7 +65,7 @@ export default {
           'currency': this.currency,
           'timestamp': this.purchasedate,
         };
-        this.$store.dispatch('FETCH_HISTOPRICE', payload);
+        this.$store.dispatch('FETCH_PRICE', payload);
       }
     },
     components: {

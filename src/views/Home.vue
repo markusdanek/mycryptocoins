@@ -34,12 +34,22 @@
     computed: {
       ...mapGetters(['getCoins'])
     },
+    methods: {
+      updateCryptoPrice(){
+        for (var i = 0; i < this.$store.state.crypto.length; i++) {
+          this.$store.dispatch('FETCH_CURRENT', this.$store.state.crypto[i]);
+        }
+      }
+    },
+    mounted() {
+      this.updateCryptoPrice();
+    }
   }
 </script>
 
 <style lang="scss">
   .debugging {
-    display: none;
+    // display: none;
     margin-top: 100px;
   }
 </style>

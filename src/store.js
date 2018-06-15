@@ -4,7 +4,7 @@ import axios from 'axios'
 import moment from 'moment';
 import _ from 'lodash'
 import createPersistedState from "vuex-persistedstate";
-import {lastWeek, lastWeekUnix} from '../src/helpers/utils';
+import {lastWeek, lastWeekUnix, uid} from '../src/helpers/utils';
 
 Vue.use(Vuex);
 
@@ -17,19 +17,16 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    RECEIVE_PRICE(state, {symbol, price}) {
-      const index = state.currencies.findIndex(d => d.symbol === symbol);
-      if (index === -1) {
-        state.currencies.push({symbol, price});
-      } else {
-        state.currencies[index] = {
-          symbol,
-          price
-        };
-      }
+    RECEIVE_PRICE(state, {symbol, amount, currency, price, purchasedate, historic}) {
+      let id = uid()
+      state.crypto.push({id, symbol, amount, currency, price, purchasedate, historic});
     },
-    RECEIVE_HISTOPRICE(state, {symbol, amount, currency, purchasedate, historic}) {
-      state.crypto.push({symbol, amount, currency, purchasedate, historic});
+    RECEIVE_CURRENTPRICE(state, {crypto, data}) {
+      state.crypto.forEach(item => {
+        if(item.price !== data.price) {
+          item.price = data;
+        }
+      });
     },
     REMOVE_CRYPTO(state, {payload}) {
       state.crypto.splice(state.crypto.indexOf(payload), 1);
@@ -38,19 +35,13 @@ export default new Vuex.Store({
 
   actions: {
     async FETCH_PRICE({commit}, payload) {
-      const url = `https://min-api.cryptocompare.com/data/price?fsym=${payload.symbol}&tsyms=${payload.currency}`;
-      const {data} = await axios.get(url);
-      commit('RECEIVE_PRICE', {
-        symbol: payload.symbol,
-        price: data[payload.currency]
-      });
-    },
-    async FETCH_HISTOPRICE({commit}, payload) {
       let requestData = [];
       let commitData = [];
       let tsWeekUnix = lastWeekUnix(payload.timestamp);
       let tsWeek = lastWeek(payload.timestamp);
       let coinValue;
+      const url = `https://min-api.cryptocompare.com/data/price?fsym=${payload.symbol}&tsyms=${payload.currency}`;
+      const {data} = await axios.get(url);
       for (var i = 0; i < tsWeek.length; i++) {
         const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${tsWeekUnix[i]}`;
         const {data} = await axios.get(url);
@@ -63,24 +54,39 @@ export default new Vuex.Store({
           });
         }
       }
-      commit('RECEIVE_HISTOPRICE', {
+      commit('RECEIVE_PRICE', {
         symbol: payload.symbol,
         amount: payload.amount,
         currency: payload.currency,
+        price: data[payload.currency],
         purchasedate: payload.timestamp,
         historic: {
           commitData
         }
       });
     },
+    async FETCH_CURRENT({ commit, state }, payload) {
+      let crypto = [payload];
+      for (var i = 0; i < crypto.length; i++) {
+        const url = `https://min-api.cryptocompare.com/data/price?fsym=${crypto[i].symbol}&tsyms=${crypto[i].currency}`;
+        const {data} = await axios.get(url);
+        data = data[payload.currency];
+        commit('RECEIVE_CURRENTPRICE', {crypto,data});
+      }
+    },
     async REMOVE_CRYPTO({commit}, payload) {
       commit('REMOVE_CRYPTO', {payload});
-    },
+    }
   },
 
   getters: {
     getCoins: state => {
       return state.crypto;
+    },
+    groupBySymbol: state =>{
+      let groupedState = state.crypto.groupBy('symbol');
+      console.log("groupedState", state.crypto.groupBy('symbol'));
+      return groupedState;
     }
   }
 })

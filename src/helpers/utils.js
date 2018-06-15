@@ -15,7 +15,7 @@ export function getJsonBody(body) {
 export function lastWeekUnix(date) {
   var result = [];
   for (var i = 0; i < 7; i++) {
-    if(date){
+    if (date) {
       var d = new Date(date);
     } else {
       var d = new Date();
@@ -29,7 +29,7 @@ export function lastWeekUnix(date) {
 export function lastWeek(date) {
   var result = [];
   for (var i = 0; i < 7; i++) {
-    if(date){
+    if (date) {
       var d = new Date(date);
     } else {
       var d = new Date();
@@ -43,7 +43,7 @@ export function lastWeek(date) {
 export function lastMonthUnix(date) {
   var result = [];
   for (var i = 0; i < 31; i++) {
-    if(date){
+    if (date) {
       var d = new Date(date);
     } else {
       var d = new Date();
@@ -52,4 +52,17 @@ export function lastMonthUnix(date) {
     result.push(moment(d).unix());
   }
   return result;
+}
+
+Array.prototype.groupBy = function(prop) {
+  return this.reduce(function(groups, item) {
+    var val = item[prop];
+    groups[val] = groups[val] || [];
+    groups[val].push(item);
+    return groups;
+  }, {});
+}
+
+export function uid() {
+  return '_' + Math.random().toString(36).substr(2, 9);
 }

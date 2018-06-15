@@ -40,7 +40,7 @@
       </div>
 
     </div>
-
+    <pre>{{groupBySymbol}}</pre>
   </div>
 </template>
 
@@ -53,14 +53,11 @@
   export default {
     name: 'list-crypto',
     computed: {
-      ...mapGetters(['getCoins'])
+      ...mapGetters(['getCoins', 'groupBySymbol'])
     },
     methods: {
       imageUrl(symbol) {
         return _.get(images, symbol);
-      },
-      cryptoState(){
-        console.log(this.$store.state.crypto);
       },
       removeCrypto(crypto){
         this.$store.dispatch('REMOVE_CRYPTO', crypto);
@@ -80,9 +77,6 @@
           return 'positiv'
         }
       }
-    },
-    mounted() {
-      this.cryptoState();
     }
   }
 </script>
