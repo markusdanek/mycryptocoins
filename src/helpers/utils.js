@@ -1,6 +1,12 @@
 import _ from 'lodash'
 import moment from 'moment';
 
+/**
+ * getJsonBody - description
+ *
+ * @param  {string} body
+ * @return {string} body
+ */
 export function getJsonBody(body) {
   if (_.isString(body)) {
     try {
@@ -12,6 +18,12 @@ export function getJsonBody(body) {
   return body;
 }
 
+/**
+ * lastWeekUnix - Return last seven days of 'date' as Unix timestamp
+ *
+ * @param  {date} date
+ * @return {date} result
+ */
 export function lastWeekUnix(date) {
   var result = [];
   for (var i = 0; i < 7; i++) {
@@ -26,6 +38,12 @@ export function lastWeekUnix(date) {
   return result;
 }
 
+/**
+ * lastWeek - Return last seven days of 'date' as timestamp
+ *
+ * @param  {date} date
+ * @return {date} result
+ */
 export function lastWeek(date) {
   var result = [];
   for (var i = 0; i < 7; i++) {
@@ -54,6 +72,12 @@ export function lastMonthUnix(date) {
   return result;
 }
 
+/**
+ * Array.prototype.groupBy - Return Array grouped based on same item prop
+ *
+ * @param  {array} prop
+ * @return {array} groups
+ */
 Array.prototype.groupBy = function(prop) {
   return this.reduce(function(groups, item) {
     var val = item[prop];
@@ -63,6 +87,11 @@ Array.prototype.groupBy = function(prop) {
   }, {});
 }
 
+/**
+ * uid - Generate and return UUID
+ *
+ * @return {uuid}
+ */
 export function uid() {
   return '_' + Math.random().toString(36).substr(2, 9);
 }

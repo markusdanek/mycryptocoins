@@ -85,7 +85,17 @@ export default new Vuex.Store({
     },
     groupBySymbol: state =>{
       let groupedState = state.crypto.groupBy('symbol');
-      console.log("groupedState", state.crypto.groupBy('symbol'));
+      for (var key in groupedState) {
+        if (groupedState.hasOwnProperty(key)) {
+          for (var i = 0; i < groupedState[key].length; i++) {
+            let amount = groupedState[key][i].amount;
+            let pricePurchaseDate = groupedState[key][i].historic.commitData[0].price;
+            let valueToday = amount * pricePurchaseDate;
+            console.log(valueToday);
+          }
+          // console.log(groupedState[key]);
+        }
+      }
       return groupedState;
     }
   }
