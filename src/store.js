@@ -4,7 +4,7 @@ import axios from 'axios'
 import moment from 'moment';
 import _ from 'lodash'
 import createPersistedState from "vuex-persistedstate";
-import {lastWeek, lastWeekUnix, uid} from '../src/helpers/utils';
+import {lastWeek, lastWeekUnix, uid, diff} from '../src/helpers/utils';
 
 Vue.use(Vuex);
 
@@ -17,14 +17,15 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    RECEIVE_PRICE(state, {symbol, amount, currency, price, purchasedate, historic}) {
+    RECEIVE_PRICE(state, {symbol, amount, currency, price, value, purchasedate, historic}) {
       let id = uid()
-      state.crypto.push({id, symbol, amount, currency, price, purchasedate, historic});
+      state.crypto.push({id, symbol, amount, currency, price, value, purchasedate, historic});
     },
     RECEIVE_CURRENTPRICE(state, {crypto, data}) {
       state.crypto.forEach(item => {
         if(item.price !== data.price) {
           item.price = data;
+          item.value = data * item.amount;
         }
       });
     },
@@ -42,6 +43,7 @@ export default new Vuex.Store({
       let coinValue;
       const url = `https://min-api.cryptocompare.com/data/price?fsym=${payload.symbol}&tsyms=${payload.currency}`;
       const {data} = await axios.get(url);
+      let valueToday = data[payload.currency] * payload.amount;
       for (var i = 0; i < tsWeek.length; i++) {
         const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${tsWeekUnix[i]}`;
         const {data} = await axios.get(url);
@@ -59,6 +61,7 @@ export default new Vuex.Store({
         amount: payload.amount,
         currency: payload.currency,
         price: data[payload.currency],
+        value: valueToday,
         purchasedate: payload.timestamp,
         historic: {
           commitData
@@ -85,18 +88,44 @@ export default new Vuex.Store({
     },
     groupBySymbol: state =>{
       let groupedState = state.crypto.groupBy('symbol');
+      let groupedStateNew = [];
       for (var key in groupedState) {
         if (groupedState.hasOwnProperty(key)) {
+
+          let cryptoAmount = [];
+          let cryptoValuePurchaseDate = [];
+          let cryptoValueToday = [];
           for (var i = 0; i < groupedState[key].length; i++) {
-            let amount = groupedState[key][i].amount;
-            let pricePurchaseDate = groupedState[key][i].historic.commitData[0].price;
-            let valueToday = amount * pricePurchaseDate;
-            console.log(valueToday);
+            cryptoAmount.push(parseFloat(groupedState[key][i].amount));
+
+            let valuePurchaseDate = _.multiply(groupedState[key][i].historic.commitData[0].price, groupedState[key][i].amount);
+            cryptoValuePurchaseDate.push(valuePurchaseDate);
+
+            cryptoValueToday.push(groupedState[key][i].value);
+
           }
-          // console.log(groupedState[key]);
+          let amountSum = _.sum(cryptoAmount);
+          let valuePD = _.sum(cryptoValuePurchaseDate);
+          let valueToday = _.sum(cryptoValueToday);
+          let valueDifference = diff(valuePD, valueToday) - valuePD;
+          valuePD = _.round(valuePD, 2);
+          valueToday = _.round(valueToday, 2);
+          valueDifference = _.round(valueDifference, 2);
+
+          console.log(valueDifference);
+
+          // FINAL
+          groupedStateNew.push({
+            symbol: 'BTC',
+            amount: amountSum,
+            valuePD: valuePD,
+            valueToday: valueToday,
+            delta: valueDifference
+          });
+          console.log("groupedStateNew", groupedStateNew);
         }
       }
-      return groupedState;
+      return groupedStateNew;
     }
   }
 })
