@@ -4,7 +4,7 @@ import axios from 'axios'
 import moment from 'moment';
 import _ from 'lodash'
 import createPersistedState from "vuex-persistedstate";
-import {lastWeek, lastWeekUnix, uid, diff} from '../src/helpers/utils';
+import {lastWeek, lastWeekUnix, uid, diff, diffPercent} from '../src/helpers/utils';
 
 Vue.use(Vuex);
 
@@ -88,6 +88,7 @@ export default new Vuex.Store({
     },
     groupBySymbol: state =>{
       let groupedState = state.crypto.groupBy('symbol');
+      console.log(groupedState);
       let groupedStateNew = [];
       for (var key in groupedState) {
         if (groupedState.hasOwnProperty(key)) {
@@ -95,6 +96,8 @@ export default new Vuex.Store({
           let cryptoAmount = [];
           let cryptoValuePurchaseDate = [];
           let cryptoValueToday = [];
+          let cryptoDiff = [];
+          let cryptoDiffPercent = [];
           for (var i = 0; i < groupedState[key].length; i++) {
             cryptoAmount.push(parseFloat(groupedState[key][i].amount));
 
@@ -103,24 +106,35 @@ export default new Vuex.Store({
 
             cryptoValueToday.push(groupedState[key][i].value);
 
+            let coinDiff = diff(groupedState[key][i].value, groupedState[key][i].historic.commitData[0].price);
+            cryptoDiff.push(coinDiff);
+
+            let coinDiffPercent = diffPercent(groupedState[key][i].value, groupedState[key][i].historic.commitData[0].price);
+            cryptoDiffPercent.push(coinDiffPercent);
+
           }
+          // Crypto sum amount
           let amountSum = _.sum(cryptoAmount);
+          // Crypto value of purchase date
           let valuePD = _.sum(cryptoValuePurchaseDate);
-          let valueToday = _.sum(cryptoValueToday);
-          let valueDifference = diff(valuePD, valueToday) - valuePD;
           valuePD = _.round(valuePD, 2);
+          // Crypto value today (amount * price)
+          let valueToday = _.sum(cryptoValueToday);
           valueToday = _.round(valueToday, 2);
+          // Crypto earning/loss
+          let valueDifference = _.sum(cryptoDiff);
           valueDifference = _.round(valueDifference, 2);
+          // Crypto earning/loss in percent
+          let valueDifferencePercent = _.sum(cryptoDiffPercent);
+          valueDifferencePercent = _.round(valueDifferencePercent, 2);
 
-          console.log(valueDifference);
-
-          // FINAL
           groupedStateNew.push({
-            symbol: 'BTC',
+            symbol: 'TODO',
             amount: amountSum,
             valuePD: valuePD,
             valueToday: valueToday,
-            delta: valueDifference
+            delta: valueDifference,
+            deltaPercent: valueDifferencePercent
           });
           console.log("groupedStateNew", groupedStateNew);
         }

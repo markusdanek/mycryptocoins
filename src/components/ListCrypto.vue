@@ -3,11 +3,12 @@
 
     <div class="columns">
 
-      <div class="column item is-one-third" v-for="(value, key) in getCoins">
+      <div class="column item is-one-third" v-for="(value, key) in groupBySymbol">
         <div class="top">
           <div class="columns">
             <div class="column is-offset-1 purchasedate">
-              <small>{{value.purchasedate | formatDate}}</small>
+              <!-- <small>{{value.purchasedate | formatDate}}</small> -->
+              <small>{{value.amount}} {{value.symbol}}</small>
             </div>
             <div class="column">
               <span class="is-pulled-right" @click="removeCrypto(value)">
@@ -20,12 +21,21 @@
               <img :src="imageUrl(value.symbol)" alt="" width="40" />
             </div>
             <div class="column info">
-              <div v-for="(asdf, key) in value.historic">
-                <div v-for="(as, key) in asdf" v-if="key==0">
-                  <h3>{{as.value | round}} {{value.currency}} ({{value.amount}} @ {{as.price}})</h3>
+              <h3>
+                {{value.valueToday}}
+              </h3>
+              <div class="columns">
+                <div class="column">
+                  <p v-if="value.deltaPercent > 0" class="positive">
+                    {{value.deltaPercent}}% ({{value.delta}})
+                    <b-icon icon="angle-up"></b-icon>
+                  </p>
+                  <p v-else class="negative">
+                    {{value.deltaPercent}}% ({{value.delta}})
+                    <b-icon icon="angle-down"></b-icon>
+                  </p>
                 </div>
               </div>
-              <p>1.3649%</p>
             </div>
           </div>
         </div>
@@ -89,7 +99,7 @@
     margin-right: 0.75rem;
     .top {
       .purchasedate {
-        color: #8c98a4;
+        color: #8C98A4;
       }
       .info {
         h3 {
@@ -98,9 +108,14 @@
           line-height: 1.5;
         }
         p {
-          color: #00c9a7;
           font-size: 80%;
           font-weight: 400;
+          &.positive {
+            color: #00C9A7;
+          }
+          &.negative {
+            color: #DE4437;
+          }
         }
       }
     }

@@ -96,6 +96,27 @@ export function uid() {
   return '_' + Math.random().toString(36).substr(2, 9);
 }
 
-export function diff(a,b){
-  return Math.abs(a-b);
+
+/**
+ * diff - description
+ *
+ * @param  {float} a
+ * @param  {float} b
+ * @return {float}
+ */
+export function diff(a, b){
+  return a - b;
+}
+
+/**
+ * diffPercent - description
+ *
+ * @param  {float} a
+ * @param  {float} b
+ * @return {integer}
+ */
+export function diffPercent(a, b) {
+  var avg = (a + b) / 2;
+  var diff = a - b;
+  return (diff / avg) * 100;
 }

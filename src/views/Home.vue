@@ -49,7 +49,7 @@
 
 <style lang="scss">
   .debugging {
-    // display: none;
+    display: none;
     margin-top: 100px;
   }
 </style>
