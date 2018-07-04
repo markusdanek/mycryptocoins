@@ -7,11 +7,13 @@ import VueResource from 'vue-resource';
 import WebFont from 'webfontloader';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import VModal from 'vue-js-modal'
 import Buefy from 'buefy';
 import 'buefy/lib/buefy.css';
 
 Vue.use(Buefy, {defaultIconPack: 'fas'});
 Vue.use(VueAxios, axios);
+Vue.use(VModal);
 
 WebFont.load({
   google: {

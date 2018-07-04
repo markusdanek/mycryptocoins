@@ -87,56 +87,46 @@ export default new Vuex.Store({
       return state.crypto;
     },
     groupBySymbol: state =>{
+      return state.crypto.groupBy('symbol');
+    },
+    cryptoOverview: state =>{
       let groupedState = state.crypto.groupBy('symbol');
-      console.log(groupedState);
       let groupedStateNew = [];
       for (var key in groupedState) {
         if (groupedState.hasOwnProperty(key)) {
-
           let cryptoAmount = [];
           let cryptoValuePurchaseDate = [];
           let cryptoValueToday = [];
           let cryptoDiff = [];
           let cryptoDiffPercent = [];
           for (var i = 0; i < groupedState[key].length; i++) {
+            // sum amount
             cryptoAmount.push(parseFloat(groupedState[key][i].amount));
-
+            // value of purchase date
             let valuePurchaseDate = _.multiply(groupedState[key][i].historic.commitData[0].price, groupedState[key][i].amount);
             cryptoValuePurchaseDate.push(valuePurchaseDate);
-
+            // value today (amount * price)
             cryptoValueToday.push(groupedState[key][i].value);
-
+            // earning/loss
             let coinDiff = diff(groupedState[key][i].value, groupedState[key][i].historic.commitData[0].price);
             cryptoDiff.push(coinDiff);
-
+            // earning/loss in percent
             let coinDiffPercent = diffPercent(groupedState[key][i].value, groupedState[key][i].historic.commitData[0].price);
             cryptoDiffPercent.push(coinDiffPercent);
-
           }
-          // Crypto sum amount
-          let amountSum = _.sum(cryptoAmount);
-          // Crypto value of purchase date
-          let valuePD = _.sum(cryptoValuePurchaseDate);
-          valuePD = _.round(valuePD, 2);
-          // Crypto value today (amount * price)
-          let valueToday = _.sum(cryptoValueToday);
-          valueToday = _.round(valueToday, 2);
-          // Crypto earning/loss
-          let valueDifference = _.sum(cryptoDiff);
-          valueDifference = _.round(valueDifference, 2);
-          // Crypto earning/loss in percent
-          let valueDifferencePercent = _.sum(cryptoDiffPercent);
-          valueDifferencePercent = _.round(valueDifferencePercent, 2);
-
+          let amountSum = _.sum(cryptoAmount); // sum amount
+          let valuePD = _.round(_.sum(cryptoValuePurchaseDate), 2); // value of purchase date
+          let valueToday = _.round(_.sum(cryptoValueToday), 2); // value today (amount * price)
+          let valueDifference = _.round(_.sum(cryptoDiff), 2); // earning/loss
+          let valueDifferencePercent = _.round(_.sum(cryptoDiffPercent), 2); // earning/loss in percent
           groupedStateNew.push({
-            symbol: 'TODO',
+            symbol: groupedState[key][0].symbol,
             amount: amountSum,
             valuePD: valuePD,
             valueToday: valueToday,
             delta: valueDifference,
             deltaPercent: valueDifferencePercent
           });
-          console.log("groupedStateNew", groupedStateNew);
         }
       }
       return groupedStateNew;

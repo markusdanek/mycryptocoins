@@ -81,4 +81,14 @@ export default {
   button.button {
     margin-top: 50px;
   }
+  // mobile
+  @media only screen and (max-width: 768px) {
+    .field {
+      padding: 0;
+    }
+    button.button {
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+  }
 </style>

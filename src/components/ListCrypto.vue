@@ -3,7 +3,7 @@
 
     <div class="columns">
 
-      <div class="column item is-one-third" v-for="(value, key) in groupBySymbol">
+      <div class="column item is-one-third" v-for="(value, key) in cryptoOverview">
         <div class="top">
           <div class="columns">
             <div class="column is-offset-1 purchasedate">
@@ -11,8 +11,8 @@
               <small>{{value.amount}} {{value.symbol}}</small>
             </div>
             <div class="column">
-              <span class="is-pulled-right" @click="removeCrypto(value)">
-                <b-icon icon="times"></b-icon>
+              <span class="is-pulled-right" @click="show(value.symbol)">
+                <b-icon icon="info-circle"></b-icon>
               </span>
             </div>
           </div>
@@ -48,9 +48,12 @@
           </div>
         </div>
       </div>
-
     </div>
-    <pre>{{groupBySymbol}}</pre>
+
+    <modal name="crypto-details" height="auto" width="70%" :scrollable="true">
+      <CryptoModal :coin="groupBySymbol[this.symbol]"/>
+    </modal>
+
   </div>
 </template>
 
@@ -59,11 +62,20 @@
   import moment from 'moment';
   import {mapGetters} from 'vuex';
   import {images} from '../helpers/coinIcons';
+  import CryptoModal from '@/components/CryptoModal'
 
   export default {
     name: 'list-crypto',
     computed: {
-      ...mapGetters(['getCoins', 'groupBySymbol'])
+      ...mapGetters(['getCoins', 'groupBySymbol','cryptoOverview'])
+    },
+    data() {
+      return {
+        symbol: ''
+      }
+    },
+    components: {
+      CryptoModal
     },
     methods: {
       imageUrl(symbol) {
@@ -71,6 +83,13 @@
       },
       removeCrypto(crypto){
         this.$store.dispatch('REMOVE_CRYPTO', crypto);
+      },
+      show(symbol) {
+        this.symbol = symbol;
+        this.$modal.show('crypto-details');
+      },
+      hide() {
+        this.$modal.hide('crypto-details');
       }
     },
     filters: {
