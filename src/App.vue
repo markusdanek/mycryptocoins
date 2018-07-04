@@ -7,6 +7,10 @@
       </div>
     </div>
     <router-view/>
+    <div id="footer">
+      Developed by <a target="_blank" href="https://www.linkedin.com/in/madanek">Markus Danek</a>.
+      Vue.js project on <a target="_blank" href="https://github.com/markusdanek/mycryptocoins">Github</a> available.
+    </div>
   </div>
 </template>
 
@@ -36,6 +40,23 @@
     }
     p {
       color: rgba(255, 255, 255, 0.7);
+    }
+  }
+  #footer {
+    position: absolute;
+    bottom: 5px;
+    left: 0%;
+    right: 0%;
+    text-align: center;
+    color: #CCC;
+    font-size: 14px;
+    a {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
   @media only screen and (max-width: 768px) {
