@@ -6,7 +6,7 @@
           <div class="column">
             <div class="control">
               <b-field label="Symbol">
-                <b-input autofocus id="crypto_symbol" placeholder="BTC" v-model="symbol" />
+                <autocomplete autofocus :source="getCryptoName" :maxlength="10" inputClass="symbolAutocomplete" @selected="addSymbolToModel" results-display="name" placeholder="BTC"></autocomplete>
               </b-field>
             </div>
           </div>
@@ -20,7 +20,7 @@
           <div class="column">
             <div class="control">
               <b-field label="Currency">
-                <b-input id="cryptoCurrency" placeholder="USD" v-model="currency" />
+                <autocomplete :source="currencyList" :maxlength="10" inputClass="symbolAutocomplete" @selected="addCurrencyToModel" results-display="name" placeholder="USD"></autocomplete>
               </b-field>
             </div>
           </div>
@@ -46,6 +46,8 @@
 
 <script>
 import Datepicker from 'vuejs-datepicker';
+import {mapGetters} from 'vuex';
+import Autocomplete from 'vuejs-auto-complete';
 
 export default {
   name: 'add-crypto',
@@ -54,23 +56,33 @@ export default {
         symbol: '',
         amount: '',
         currency: '',
-        purchasedate: new Date()
+        purchasedate: new Date(),
+        currencyList: [{id: 1, name:'USD'}, {id: 2, name:'EUR'}, {id: 3, name:'GBP'}, {id: 4, name:'JPY'}, {id: 5, name:'CNY'}, {id: 6, name:'KRW'}]
       }
+  },
+  computed: {
+    ...mapGetters(['getCryptoName'])
+  },
+  mounted() {
+    this.$store.dispatch('FETCH_CRYPTONAME');
+  },
+  methods: {
+    addToModel(input) {
+      this.symbol = input.display;
     },
-    methods: {
-      addCrypto() {
-        const payload = {
-          'symbol': this.symbol,
-          'amount': this.amount,
-          'currency': this.currency,
-          'timestamp': this.purchasedate,
-        };
-        this.$store.dispatch('FETCH_PRICE', payload);
-      }
-    },
-    components: {
-      Datepicker
+    addCrypto() {
+      const payload = {
+        'symbol': this.symbol,
+        'amount': this.amount,
+        'currency': this.currency,
+        'timestamp': this.purchasedate,
+      };
+      this.$store.dispatch('FETCH_PRICE', payload);
     }
+  },
+  components: {
+    Datepicker, Autocomplete
+  }
 }
 </script>
 

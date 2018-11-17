@@ -9,9 +9,14 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import VModal from 'vue-js-modal'
 import Buefy from 'buefy';
+import Autocomplete from 'v-autocomplete';
 import 'buefy/lib/buefy.css';
+import 'v-autocomplete/dist/v-autocomplete.css';
 
-Vue.use(Buefy, {defaultIconPack: 'fas'});
+Vue.use(Autocomplete);
+Vue.use(Buefy, {
+  defaultIconPack: 'fas'
+});
 Vue.use(VueAxios, axios);
 Vue.use(VModal);
 

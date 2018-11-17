@@ -4,7 +4,13 @@ import axios from 'axios'
 import moment from 'moment';
 import _ from 'lodash'
 import createPersistedState from "vuex-persistedstate";
-import {lastWeek, lastWeekUnix, uid, diff, diffPercent} from '../src/helpers/utils';
+import {
+  lastWeek,
+  lastWeekUnix,
+  uid,
+  diff,
+  diffPercent
+} from '../src/helpers/utils';
 
 Vue.use(Vuex);
 
@@ -13,46 +19,95 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
 
   state: {
-    crypto: []
+    crypto: [],
+    cryptoName: []
   },
 
   mutations: {
-    RECEIVE_PRICE(state, {symbol, amount, currency, price, value, purchasedate, historic}) {
+    RECEIVE_PRICE(state, {
+      symbol,
+      amount,
+      currency,
+      price,
+      value,
+      purchasedate,
+      historic
+    }) {
       let id = uid()
-      state.crypto.push({id, symbol, amount, currency, price, value, purchasedate, historic});
+      state.crypto.push({
+        id,
+        symbol,
+        amount,
+        currency,
+        price,
+        value,
+        purchasedate,
+        historic
+      });
     },
-    RECEIVE_CURRENTPRICE(state, {crypto, data}) {
+    RECEIVE_CURRENTPRICE(state, {
+      crypto,
+      data
+    }) {
       state.crypto.forEach(item => {
-        if(item.price !== data.price) {
+        if (item.price !== data.price) {
           item.price = data;
           item.value = data * item.amount;
         }
       });
     },
-    REMOVE_CRYPTO(state, {payload}) {
+    REMOVE_CRYPTO(state, {
+      payload
+    }) {
       state.crypto.splice(state.crypto.indexOf(payload), 1);
+    },
+    RECEIVE_CRYPTONAME(state, {
+      payload
+    }) {
+      if (state.cryptoName.length < 1) {
+        for (let key in payload) {
+          if (payload.hasOwnProperty(key)) {
+            state.cryptoName.push({
+              id: payload[key].Id,
+              name: payload[key].Name
+            });
+          }
+        }
+      }
     }
   },
 
   actions: {
-    async FETCH_PRICE({commit}, payload) {
+    async FETCH_PRICE({
+      commit
+    }, payload) {
       let requestData = [];
       let commitData = [];
       let tsWeekUnix = lastWeekUnix(payload.timestamp);
       let tsWeek = lastWeek(payload.timestamp);
       let coinValue;
+      console.log(payload.currency);
+      console.log(payload.symbol);
       const url = `https://min-api.cryptocompare.com/data/price?fsym=${payload.symbol}&tsyms=${payload.currency}`;
-      const {data} = await axios.get(url);
+      const {
+        data
+      } = await axios.get(url);
+      console.log(data);
       let valueToday = data[payload.currency] * payload.amount;
       for (var i = 0; i < tsWeek.length; i++) {
         const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${tsWeekUnix[i]}`;
-        const {data} = await axios.get(url);
+        const {
+          data
+        } = await axios.get(url);
         requestData.push(data);
       }
       for (var i = 0; i < tsWeek.length; i++) {
         for (var i = 0; i < requestData.length; i++) {
-          coinValue= _.multiply(requestData[i][payload.symbol][payload.currency], payload.amount);
-          commitData.push({ts: tsWeek[i], price: requestData[i][payload.symbol][payload.currency], value: coinValue
+          coinValue = _.multiply(requestData[i][payload.symbol][payload.currency], payload.amount);
+          commitData.push({
+            ts: tsWeek[i],
+            price: requestData[i][payload.symbol][payload.currency],
+            value: coinValue
           });
         }
       }
@@ -68,17 +123,44 @@ export default new Vuex.Store({
         }
       });
     },
-    async FETCH_CURRENT({ commit, state }, payload) {
+    async FETCH_CRYPTONAME({
+      commit,
+      state
+    }) {
+      let payload = {};
+      const url = `https://min-api.cryptocompare.com/data/all/coinlist`;
+      const {
+        data
+      } = await axios.get(url);
+      // payload = Object.keys(data.Data);
+      payload = data.Data;
+      commit('RECEIVE_CRYPTONAME', {
+        payload
+      });
+    },
+    async FETCH_CURRENT({
+      commit,
+      state
+    }, payload) {
       let crypto = [payload];
       for (var i = 0; i < crypto.length; i++) {
         const url = `https://min-api.cryptocompare.com/data/price?fsym=${crypto[i].symbol}&tsyms=${crypto[i].currency}`;
-        const {data} = await axios.get(url);
+        const {
+          data
+        } = await axios.get(url);
         data = data[payload.currency];
-        commit('RECEIVE_CURRENTPRICE', {crypto,data});
+        commit('RECEIVE_CURRENTPRICE', {
+          crypto,
+          data
+        });
       }
     },
-    async REMOVE_CRYPTO({commit}, payload) {
-      commit('REMOVE_CRYPTO', {payload});
+    async REMOVE_CRYPTO({
+      commit
+    }, payload) {
+      commit('REMOVE_CRYPTO', {
+        payload
+      });
     }
   },
 
@@ -86,10 +168,15 @@ export default new Vuex.Store({
     getCoins: state => {
       return state.crypto;
     },
-    groupBySymbol: state =>{
+    getCryptoName: state => {
+      // let nameArray = [];
+      // nameArray.push(Object.values(state.cryptoName));
+      return state.cryptoName;
+    },
+    groupBySymbol: state => {
       return state.crypto.groupBy('symbol');
     },
-    cryptoOverview: state =>{
+    cryptoOverview: state => {
       let groupedState = state.crypto.groupBy('symbol');
       let groupedStateNew = [];
       for (var key in groupedState) {
@@ -118,7 +205,7 @@ export default new Vuex.Store({
           let valuePD = _.round(_.sum(cryptoValuePurchaseDate), 2); // value of purchase date
           let valueToday = _.round(_.sum(cryptoValueToday), 2); // value today (amount * price)
           let valueDifference = _.round(_.sum(cryptoDiff), 2); // earning/loss
-          let valueDifferencePercent = _.round(_.sum(cryptoDiffPercent), 2); // earning/loss in percent
+          let valueDifferencePercent = _.round((_.sum(cryptoDiffPercent) / cryptoDiffPercent.length), 2); // earning/loss in percent
           groupedStateNew.push({
             symbol: groupedState[key][0].symbol,
             amount: amountSum,
