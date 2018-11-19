@@ -67,8 +67,11 @@ export default {
     this.$store.dispatch('FETCH_CRYPTONAME');
   },
   methods: {
-    addToModel(input) {
+    addSymbolToModel(input) {
       this.symbol = input.display;
+    },
+    addCurrencyToModel(input) {
+      this.currency = input.display;
     },
     addCrypto() {
       const payload = {

@@ -20,7 +20,8 @@ export default new Vuex.Store({
 
   state: {
     crypto: [],
-    cryptoName: []
+    cryptoName: [],
+    cryptoImage: []
   },
 
   mutations: {
@@ -74,6 +75,20 @@ export default new Vuex.Store({
           }
         }
       }
+    },
+    RECEIVE_CRYPTOIMAGE(state, {
+      payload
+    }) {
+      if (state.cryptoImage.length < 1) {
+        for (let key in payload) {
+          if (payload.hasOwnProperty(key)) {
+            state.cryptoImage.push({
+              symbol: payload[key].Name,
+              image: 'https://www.cryptocompare.com' + payload[key].ImageUrl
+            });
+          }
+        }
+      }
     }
   },
 
@@ -86,13 +101,10 @@ export default new Vuex.Store({
       let tsWeekUnix = lastWeekUnix(payload.timestamp);
       let tsWeek = lastWeek(payload.timestamp);
       let coinValue;
-      console.log(payload.currency);
-      console.log(payload.symbol);
       const url = `https://min-api.cryptocompare.com/data/price?fsym=${payload.symbol}&tsyms=${payload.currency}`;
       const {
         data
       } = await axios.get(url);
-      console.log(data);
       let valueToday = data[payload.currency] * payload.amount;
       for (var i = 0; i < tsWeek.length; i++) {
         const url = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${payload.symbol}&tsyms=${payload.currency}&ts=${tsWeekUnix[i]}`;
@@ -101,12 +113,14 @@ export default new Vuex.Store({
         } = await axios.get(url);
         requestData.push(data);
       }
+      let histoPrice = [];
       for (var i = 0; i < tsWeek.length; i++) {
         for (var i = 0; i < requestData.length; i++) {
           coinValue = _.multiply(requestData[i][payload.symbol][payload.currency], payload.amount);
+          histoPrice.push(requestData[i][payload.symbol][payload.currency]);
           commitData.push({
             ts: tsWeek[i],
-            price: requestData[i][payload.symbol][payload.currency],
+            price: histoPrice,
             value: coinValue
           });
         }
@@ -135,6 +149,20 @@ export default new Vuex.Store({
       // payload = Object.keys(data.Data);
       payload = data.Data;
       commit('RECEIVE_CRYPTONAME', {
+        payload
+      });
+    },
+    async FETCH_CRYPTOIMAGE({
+      commit,
+      state
+    }) {
+      let payload = {};
+      const url = `https://min-api.cryptocompare.com/data/all/coinlist`;
+      const {
+        data
+      } = await axios.get(url);
+      payload = data.Data;
+      commit('RECEIVE_CRYPTOIMAGE', {
         payload
       });
     },
@@ -169,12 +197,28 @@ export default new Vuex.Store({
       return state.crypto;
     },
     getCryptoName: state => {
-      // let nameArray = [];
-      // nameArray.push(Object.values(state.cryptoName));
       return state.cryptoName;
+    },
+    getCryptoImage: state => {
+      return state.cryptoImage;
     },
     groupBySymbol: state => {
       return state.crypto.groupBy('symbol');
+    },
+    getCryptoHistoricPrice: state => {
+      let groupedState = state.crypto.groupBy('symbol');
+      console.log(groupedState);
+      let histoPrice = [];
+      for (var i = 0; i < state.crypto.length; i++) {
+        for (var j = 0; j < state.crypto[i].historic.commitData.length; j++) {
+          histoPrice.push({
+            symbol: state.crypto[i].symbol,
+            prices: state.crypto[i].historic.commitData[j].price
+          });
+        }
+      }
+      console.log("histoPrice", histoPrice);
+      return histoPrice;
     },
     cryptoOverview: state => {
       let groupedState = state.crypto.groupBy('symbol');

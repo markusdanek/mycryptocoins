@@ -18,7 +18,7 @@
           </div>
           <div class="columns">
             <div class="column is-offset-1 is-2">
-              <img :src="imageUrl(value.symbol)" alt="" width="40" />
+              <img :src="imageUrl(value.symbol)" alt="crypto image" />
             </div>
             <div class="column info">
               <h3>
@@ -43,7 +43,8 @@
         <div class="bottom">
           <div class="columns">
             <div class="column">
-              <img src="../assets/bar-chart.png" alt="">
+              <PriceChart />
+              <!-- <img src="../assets/bar-chart.png" alt=""> -->
             </div>
           </div>
         </div>
@@ -62,23 +63,33 @@
   import {mapGetters} from 'vuex';
   import {images} from '../helpers/coinIcons';
   import CryptoModal from '@/components/CryptoModal'
+  import PriceChart from '@/components/PriceChart'
 
   export default {
     name: 'list-crypto',
     computed: {
-      ...mapGetters(['getCoins', 'groupBySymbol','cryptoOverview'])
+      ...mapGetters(['getCoins', 'groupBySymbol','cryptoOverview', 'getCryptoImage'])
     },
     data() {
       return {
         symbol: ''
       }
     },
+    mounted() {
+      this.$store.dispatch('FETCH_CRYPTOIMAGE');
+    },
     components: {
-      CryptoModal
+      CryptoModal, PriceChart
     },
     methods: {
       imageUrl(symbol) {
-        return _.get(images, symbol);
+        for (let key in this.getCryptoImage) {
+          if (this.getCryptoImage.hasOwnProperty(key)) {
+            if (this.getCryptoImage[key].symbol === symbol) {
+              return this.getCryptoImage[key].image;
+            }
+          }
+        }
       },
       removeCrypto(crypto){
         this.$store.dispatch('REMOVE_CRYPTO', crypto);
