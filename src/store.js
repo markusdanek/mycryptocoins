@@ -120,7 +120,8 @@ export default new Vuex.Store({
           histoPrice.push(requestData[i][payload.symbol][payload.currency]);
           commitData.push({
             ts: tsWeek[i],
-            price: histoPrice,
+            // price: histoPrice,
+            price: requestData[i][payload.symbol][payload.currency],
             value: coinValue
           });
         }
@@ -205,19 +206,19 @@ export default new Vuex.Store({
     groupBySymbol: state => {
       return state.crypto.groupBy('symbol');
     },
-    getCryptoHistoricPrice: state => {
+    getCryptoHistoricPrice: state => symbol => {
+      let coin = [symbol];
       let groupedState = state.crypto.groupBy('symbol');
-      console.log(groupedState);
       let histoPrice = [];
-      for (var i = 0; i < state.crypto.length; i++) {
-        for (var j = 0; j < state.crypto[i].historic.commitData.length; j++) {
-          histoPrice.push({
-            symbol: state.crypto[i].symbol,
-            prices: state.crypto[i].historic.commitData[j].price
-          });
+      for (let key in groupedState) {
+        if (groupedState.hasOwnProperty(key)) {
+          if (symbol === groupedState[key][0].symbol) {
+            for (let i = 0; i < groupedState[key][0].historic.commitData.length; i++) {
+              histoPrice.push(groupedState[key][0].historic.commitData[i].price);
+            }
+          }
         }
       }
-      console.log("histoPrice", histoPrice);
       return histoPrice;
     },
     cryptoOverview: state => {

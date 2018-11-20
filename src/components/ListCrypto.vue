@@ -43,8 +43,10 @@
         <div class="bottom">
           <div class="columns">
             <div class="column">
-              <PriceChart />
-              <!-- <img src="../assets/bar-chart.png" alt=""> -->
+              <div class="markus">
+                <PriceChart :coin="value.symbol" />
+              </div>
+              <img src="../assets/bar-chart.png" alt="">
             </div>
           </div>
         </div>
@@ -153,5 +155,8 @@
         }
       }
     }
+  }
+  .markus {
+    height: 200px;
   }
 </style>

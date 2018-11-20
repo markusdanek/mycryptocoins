@@ -1,51 +1,59 @@
 <script>
 import {
-  Bar
+  Line
 } from 'vue-chartjs'
 
 export default {
-  extends: Bar,
+  extends: Line,
   name: 'price-chart',
+  props: {
+    coin: {
+      type: String
+    }
+  },
   mounted() {
     this.renderChart({
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: ['', '', '', '', '', '', ''],
       datasets: [{
-        label: '',
+        label: this.coin,
         backgroundColor: '#19a0ff',
-        fill: true,
+        borderColor: '#19a0ff',
+        borderWidth: '3',
+        fill: false,
         showLine: true,
-        data: this.$store.getters.getCryptoHistoricPrice,
-      }]
+        data: this.$store.getters.getCryptoHistoricPrice(this.coin)
+      }],
     }, {
-      // scales: {
-      //   xAxes: [{
-      //     gridLines: {
-      //       display: false
-      //     },
-      //     ticks: {
-      //       display: false
-      //     }
-      //   }],
-      //   yAxes: [{
-      //     gridLines: {
-      //       display: false
-      //     },
-      //     ticks: {
-      //       display: false
-      //     }
-      //   }]
-      // },
-      responsive: true,
+      scales: {
+        xAxes: [{
+          gridLines: {
+            display: false
+          },
+          ticks: {
+            display: false
+          }
+        }],
+        yAxes: [{
+          type: 'linear',
+          gridLines: {
+            display: false
+          },
+          ticks: {
+            display: false
+          }
+        }]
+      },
       legend: {
-        display: true
+        display: false
       },
       title: {
-        display: true
+        display: false
       },
       tooltips: {
-        enabled: true
-      }
-
+        // enabled: false
+      },
+      responsive: true,
+      maintainAspectRatio: false
     })
   }
 }
