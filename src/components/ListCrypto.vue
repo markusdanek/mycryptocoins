@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <modal name="crypto-details" height="auto" width="70%" :scrollable="true" @before-open="beforeOpen()">
+    <modal name="crypto-details" height="auto" width="70%" :scrollable="true">
       <CryptoModal :coin="groupBySymbol[this.symbol]"/>
     </modal>
 
@@ -100,11 +100,6 @@
       },
       hide() {
         this.$modal.hide('crypto-details');
-      },
-      beforeOpen(data) {
-        if (data.length === 0) {
-          // this.hide();
-        }
       }
     },
     filters: {

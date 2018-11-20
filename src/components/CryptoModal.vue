@@ -11,33 +11,31 @@
           {{value.symbol}}
         </div>
         <div class="value">
-          <p>Value</p>
-          {{value.value}}
-        </div>
-        <div class="purchasedate">
-          <p>Purchase Date</p>
-          {{value.purchasedate | formatDate}}
+          <p>Portfolio today</p>
+          {{value.value}} {{value.currency}}
         </div>
         <div class="today">
-          <p>Today ({{value.currency}})</p>
-          {{value.price}}
+          <p>Price today</p>
+          {{value.price}} {{value.currency}}
         </div>
         <div class="yesterday">
-          <p>Purchase date ({{value.currency}})</p>
+          <p>Purchase price</p>
           <div v-for="(value, key) in value">
             <div v-for="(value, key) in value.commitData" v-if="key==0">
               {{value.price}}
             </div>
           </div>
         </div>
+        <div class="purchasedate">
+          <p>Purchase date</p>
+          {{value.purchasedate | formatDate}}
+        </div>
         <div class="remove">
           <p>&nbsp;</p>
           <span @click="removeCrypto(value)"><b-icon icon="times"></b-icon></span>
         </div>
       </div>
-      <!-- <hr> -->
     </div>
-    <!-- <pre>{{coin}}</pre> -->
   </div>
 </template>
 
@@ -45,10 +43,14 @@
   import _ from 'lodash'
   import moment from 'moment';
   import {images} from '../helpers/coinIcons';
+  import {mapGetters} from 'vuex';
   export default {
     name: 'crypto-modal',
     props: {
       coin: Array
+    },
+    computed: {
+      ...mapGetters(['getCryptoImage'])
     },
     data() {
       return {
@@ -57,10 +59,19 @@
     },
     methods: {
       imageUrl(symbol) {
-        return _.get(images, symbol);
+        for (let key in this.getCryptoImage) {
+          if (this.getCryptoImage.hasOwnProperty(key)) {
+            if (this.getCryptoImage[key].symbol === symbol) {
+              return this.getCryptoImage[key].image;
+            }
+          }
+        }
       },
       removeCrypto(crypto){
         this.$store.dispatch('REMOVE_CRYPTO', crypto);
+        if (this.coin.length < 2) {
+          this.$modal.hide('crypto-details');
+        }
       }
     },
     filters: {
