@@ -12,6 +12,8 @@ export default {
     }
   },
   mounted() {
+    this.gradient = this.$refs.canvas.getContext('2d').createLinearGradient(0, 0, 0, 450);
+    this.gradient.addColorStop(0, 'rgba(255, 0,0, 0.5)');
     this.renderChart({
       labels: ['', '', '', '', '', '', ''],
       datasets: [{
@@ -22,21 +24,24 @@ export default {
         fill: false,
         showLine: true,
         data: this.$store.getters.getCryptoHistoricPrice(this.coin)
+        // pointBackgroundColor: '#ffc107'
+        // pointBorderColor: '#ffc107'
       }],
     }, {
       scales: {
         xAxes: [{
           gridLines: {
-            display: false
+            display: false,
+            drawBorder: false
           },
           ticks: {
             display: false
           }
         }],
         yAxes: [{
-          type: 'linear',
           gridLines: {
-            display: false
+            display: false,
+            drawBorder: false
           },
           ticks: {
             display: false
@@ -58,6 +63,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

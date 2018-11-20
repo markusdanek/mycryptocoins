@@ -43,10 +43,8 @@
         <div class="bottom">
           <div class="columns">
             <div class="column">
-              <div class="markus">
-                <PriceChart :coin="value.symbol" />
-              </div>
-              <img src="../assets/bar-chart.png" alt="">
+              <PriceChart :coin="value.symbol" :styles="{width: '360px', height: '100px', position: 'relative'}" />
+              <p class="chart-legend">Market trend for the last seven days</p>
             </div>
           </div>
         </div>
@@ -155,8 +153,12 @@
         }
       }
     }
-  }
-  .markus {
-    height: 200px;
+    .bottom {
+      p.chart-legend {
+        font-size: 0.75rem;
+        color: #8C98A4;
+        text-align: right;
+      }
+    }
   }
 </style>
