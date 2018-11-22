@@ -44,7 +44,7 @@
           <div class="columns">
             <div class="column">
               <PriceChart :coin="value.symbol" :styles="{width: '360px', height: '100px', position: 'relative'}" />
-              <p class="chart-legend">Market trend for the last seven days</p>
+              <!-- <p class="chart-legend">Market trend for the last seven days</p> -->
             </div>
           </div>
         </div>

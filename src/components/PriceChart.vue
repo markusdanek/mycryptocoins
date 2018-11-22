@@ -21,11 +21,12 @@ export default {
         backgroundColor: '#19a0ff',
         borderColor: '#19a0ff',
         borderWidth: '3',
-        fill: false,
+        pointBorderWidth: '1',
+        // pointBackgroundColor: '#19C0DD',
+        // pointBorderColor: '#19C0DD',
+        fill: true,
         showLine: true,
         data: this.$store.getters.getCryptoHistoricPrice(this.coin)
-        // pointBackgroundColor: '#ffc107'
-        // pointBorderColor: '#ffc107'
       }],
     }, {
       scales: {
